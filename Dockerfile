@@ -1,5 +1,12 @@
-FROM node:18
+FROM node:18-alpine
 
-mkdir /app
-workdir /app
-npm install express --save
+RUN mkdir /app
+WORKDIR /app
+
+COPY ./api .
+
+RUN npm install
+
+EXPOSE 3000
+
+ENTRYPOINT ["node", "server.js"] 

@@ -1,9 +1,12 @@
 {
     "name": "liatrio-exercise",
     "main": "index.js",
+    "type": "module",
     "dependencies": {
-        "@pulumi/pulumi": "^3.0.0",
         "@pulumi/aws": "^5.0.0",
-        "@pulumi/awsx": "^1.0.0"
+        "@pulumi/awsx": "^1.0.0",
+        "@pulumi/eks": "^1.0.1",
+        "@pulumi/pulumi": "^3.0.0",
+        "typescript": "^4.9.4"
     }
 }

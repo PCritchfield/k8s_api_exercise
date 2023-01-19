@@ -1,0 +1,6 @@
+name: liatrio-exercise
+runtime:
+  name: nodejs
+  options:
+    typescript: false
+description: A sample deployment app for an EKS cluster

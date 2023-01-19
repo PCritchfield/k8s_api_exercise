@@ -1,5 +1,6 @@
 docker_tag = philjim/simple-api:latest
 ENVFILE ?= env.template
+URL:=$(shell cd ./infra && pulumi stack output url)
 
 envfile:
 	cp -f $(ENVFILE) .env
@@ -19,9 +20,15 @@ pulumi_init:
 	npm install
 
 pulumi_up:
-	export $(grep -v '^#' .env | xargs); \
+	@export $(grep -v '^#' .env | xargs); \
 	cd ./infra && pulumi login file://../.state; \
-	pulumi up --non-interactive --yes
+	pulumi up -v=3 --non-interactive --yes
+
+pulumi_test:
+	@cd ./infra \
+	pulumi stack output kubeconfig > kubeconfig.yml; \
+	KUBECONFIG=./kubeconfig.yml kubectl get all; \
+	curl http://${URL}
 
 pulumi_destroy:
 	export $(grep -v '^#' .env | xargs); \

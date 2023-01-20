@@ -1,6 +1,7 @@
 docker_tag = philjim/simple-api:latest
 ENVFILE ?= env.template
-URL:=$(shell cd ./infra && pulumi stack output url)
+URL=$(shell cd ./infra && pulumi stack output url)
+ENV=$(shell grep -v '^#' .env | xargs)
 
 envfile:
 	cp -f $(ENVFILE) .env
@@ -13,24 +14,27 @@ push:
 	docker image push ${docker_tag}
 
 pulumi_init:
-	@echo Deploy the EKS infrastructure via pulumi
-	export $(grep -v '^#' .env | xargs); \
+	@echo Initialize the local workspace for Pulumi
+	export ${ENV}; \
 	cd ./infra && pulumi login file://../.state; \
 	pulumi stack init --non-interactive --secrets-provider=passphrase --stack=dev; \
 	npm install
 
 pulumi_up:
-	@export $(grep -v '^#' .env | xargs); \
-	cd ./infra && pulumi login file://../.state; \
-	pulumi up -v=3 --non-interactive --yes
+	@echo Deploy the EKS cluster and the API
+	export ${ENV}; \
+	cd ./infra; pulumi login file://../.state; \
+	pulumi up --non-interactive --yes
 
 pulumi_test:
-	@cd ./infra \
+	@echo Test that the EKS cluster API is responding
+	cd ./infra; \
 	pulumi stack output kubeconfig > kubeconfig.yml; \
 	KUBECONFIG=./kubeconfig.yml kubectl get all; \
 	curl http://${URL}
 
 pulumi_destroy:
-	export $(grep -v '^#' .env | xargs); \
+	@echo Destroying the EKS Cluster...
+	export ${ENV}; \
 	cd ./infra && pulumi login file://../.state; \
 	pulumi destroy --non-interactive --yes

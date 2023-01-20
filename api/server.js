@@ -15,3 +15,8 @@ let api_response = {
 app.get('/', (req, res) => {
     res.json(api_response);
 });
+
+app.use(express.static('public'))
+app.use((req, res, next) => {
+    res.status(404).sendFile("/app/public/404.html");
+});

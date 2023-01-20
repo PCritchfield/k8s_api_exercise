@@ -43,6 +43,7 @@ const myDeployment = new kubernetes.apps.v1.Deployment(
             {
               name: "sample-api",
               image: "philjim/simple-api:latest",
+              imagePullPolicy: "Always",
               ports: [
                 {
                   containerPort: 3000

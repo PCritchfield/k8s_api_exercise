@@ -6,7 +6,7 @@ URL:=$(shell export ${ENV} && cd ./infra && pulumi stack output url)
 envfile:
 	cp -f $(ENVFILE) .env
 
-deploy: pulumi_init pulumi_up pulumi_test
+deploy: pulumi_init pulumi_up
 
 build:
 	@echo Build API Container

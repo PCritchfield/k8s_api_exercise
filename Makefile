@@ -1,10 +1,12 @@
-docker_tag = philjim/simple-api:latest
-ENVFILE ?= env.template
-URL=$(shell cd ./infra && pulumi stack output url)
+docker_tag=philjim/simple-api:latest
+ENVFILE?=env.template
 ENV=$(shell grep -v '^#' .env | xargs)
+URL:=$(shell export ${ENV} && cd ./infra && pulumi stack output url)
 
 envfile:
 	cp -f $(ENVFILE) .env
+
+deploy: pulumi_init pulumi_up pulumi_test
 
 build:
 	@echo Build API Container
@@ -28,6 +30,7 @@ pulumi_up:
 
 pulumi_test:
 	@echo Test that the EKS cluster API is responding
+	export ${ENV}; \
 	cd ./infra; \
 	pulumi stack output kubeconfig > kubeconfig.yml; \
 	KUBECONFIG=./kubeconfig.yml kubectl get all; \

@@ -87,5 +87,5 @@ const eksService = new kubernetes.core.v1.Service(
 export const kubeconfig = cluster.kubeconfig
 // Export the URL for the load balanced service.
 export const url = eksService.status.apply(
-    status => status?.loadBalancer?.ingress[0]?.hostname
+    status => status.loadBalancer.ingress[0].hostname
 )

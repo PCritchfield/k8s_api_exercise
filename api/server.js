@@ -5,14 +5,13 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
 
-let date_ob = new Date();
-
-let api_response = {
-    message: 'Automate all the things!',
-    timestamp: date_ob
-}
-
 app.get('/', (req, res) => {
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
+    let api_response = {
+        message: 'Automate all the things!',
+        timestamp: today.toISOString()
+    }
     res.json(api_response);
 });
 

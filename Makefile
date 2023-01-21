@@ -1,4 +1,6 @@
-docker_tag=philjim/simple-api:latest
+DOCKER_TAG?=latest
+DOCKER_REPO?=philjim/simple-api
+DOCKER_URL?=${DOCKER_REPO}:${DOCKER_TAG}
 ENVFILE?=env.template
 ENV=$(shell grep -v '^#' .env | xargs)
 URL:=$(shell export ${ENV} && cd ./infra && pulumi stack output url)
@@ -8,12 +10,18 @@ envfile:
 
 deploy: pulumi_init pulumi_up
 
+# DOCKER COMMANDS
 build:
 	@echo Build API Container
-	docker build -t ${docker_tag} .
+	docker build -t ${DOCKER_URL} .
+
+pull:
+	@echo Pull the API container from DockerHub
+	docker image pull ${DOCKER_URL}
+
 push:
-	@echo Push API container to DockerHub
-	docker image push ${docker_tag}
+	@echo Push the API container to DockerHub
+	docker image push ${DOCKER_URL}
 
 pulumi_init:
 	@echo Initialize the local workspace for Pulumi

@@ -1,5 +1,5 @@
 {
-    "name": "liatrio-exercise",
+    "name": "k8s-api-exercise",
     "main": "index.js",
     "type": "module",
     "dependencies": {

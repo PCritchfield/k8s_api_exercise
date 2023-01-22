@@ -1,4 +1,4 @@
-name: liatrio-exercise
+name: k8s-api-exercise
 runtime:
   name: nodejs
   options:

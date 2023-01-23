@@ -3,7 +3,7 @@ DOCKER_REPO?=philjim/simple-api
 DOCKER_URL?=${DOCKER_REPO}:${DOCKER_TAG}
 ENVFILE?=env.template
 ENV=$(shell grep -v '^#' .env | xargs)
-URL:=$(shell export ${ENV} && cd ./infra && pulumi stack output url)
+URL:=$(shell export ${ENV} && cd ./infra && pulumi stack -s dev output url)
 
 help: 
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
@@ -36,7 +36,7 @@ pulumi_init: ## Initialize the local environment for deployment
 
 .PHONY: pulumi_up
 pulumi_up: ## Deploy the EKS cluster and API to AWS
-	export ${ENV}; \
+	@export ${ENV}; \
 	cd ./infra; pulumi login file://../.state; \
 	pulumi up -s dev --non-interactive --yes
 
@@ -44,7 +44,7 @@ pulumi_up: ## Deploy the EKS cluster and API to AWS
 pulumi_test: ## Confirm that the EKS cluster is up and running
 	@export ${ENV}; \
 	cd ./infra; \
-	pulumi stack output kubeconfig > kubeconfig.yml; \
+	pulumi stack -s dev output kubeconfig > kubeconfig.yml; \
 	KUBECONFIG=./kubeconfig.yml kubectl get all; \
 	curl http://${URL}
 

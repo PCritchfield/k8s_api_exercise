@@ -36,9 +36,9 @@ pulumi_init: ## Initialize the local environment for deployment
 
 .PHONY: pulumi_up
 pulumi_up: ## Deploy the EKS cluster and API to AWS
-	@export ${ENV}; \
+	export ${ENV}; \
 	cd ./infra; pulumi login file://../.state; \
-	pulumi up --non-interactive --yes
+	pulumi up -s dev --non-interactive --yes
 
 .PHONY: pulumi_test
 pulumi_test: ## Confirm that the EKS cluster is up and running
@@ -52,4 +52,4 @@ pulumi_test: ## Confirm that the EKS cluster is up and running
 pulumi_destroy: ## Destroy the EKS Cluster
 	@export ${ENV}; \
 	cd ./infra && pulumi login file://../.state; \
-	pulumi destroy --non-interactive --yes
+	pulumi destroy -s dev --non-interactive --yes

@@ -11,6 +11,8 @@ const cluster = new eks.Cluster("cluster", {
     vpcId: vpc.vpcId,
     publicSubnetIds: vpc.publicSubnetIds,
     privateSubnetIds: vpc.privateSubnetIds,
+    maxSize: 3,
+    minSize:2,
     nodeAssociatePublicIpAddress: false,
 });
 const eksProvider = new kubernetes.Provider("eks-provider", {

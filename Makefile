@@ -1,9 +1,9 @@
-DOCKER_TAG?=latest
-DOCKER_REPO?=philjim/simple-api
-DOCKER_URL?=${DOCKER_REPO}:${DOCKER_TAG}
+API_DOCKER_TAG?=latest
+API_DOCKER_REPO?=philjim/simple-api
+API_DOCKER_URL?=${API_DOCKER_REPO}:${API_DOCKER_TAG}
 ENVFILE?=env.template
 ENV=$(shell grep -v '^#' .env | xargs)
-URL:=$(shell export ${ENV} && cd ./infra && pulumi stack -s dev output url)
+#URL:=$(shell export ${ENV} && cd ./infra && pulumi stack -s dev output url)
 
 help: 
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
@@ -15,16 +15,19 @@ deploy: pulumi_init pulumi_up ## Run both pulumi up and pulumi init
 envfile: ## Create a .env file from env.template
 	@cp -f $(ENVFILE) .env
 
+api_build: 
+	DOCKER_URL=${API_DOCKER_URL} make _build
+
 .PHONY: build
-build: ## Build the Express JS API Container
+_build: ## Build the Express JS API Container
 	@docker build -t ${DOCKER_URL} .
 
 .PHONY: pull
-pull: ## Pull the Express JS API Container from the container registry
+_pull: ## Pull the Express JS API Container from the container registry
 	@docker image pull ${DOCKER_URL}
 
 .PHONY: push
-push: ## Push the Express JS API Container to the container registry
+_push: ## Push the Express JS API Container to the container registry
 	@docker image push ${DOCKER_URL}
 
 .PHONY: pulumi_init
@@ -53,3 +56,9 @@ pulumi_destroy: ## Destroy the EKS Cluster
 	@export ${ENV}; \
 	cd ./infra && pulumi login file://../.state; \
 	pulumi destroy -s dev --non-interactive --yes
+
+.PHONY: pulumi_preview
+pulumi_preview: ## Deploy the EKS cluster and API to AWS
+	@export ${ENV}; \
+	cd ./infra; pulumi login file://../.state; \
+	pulumi preview -s dev --non-interactive
